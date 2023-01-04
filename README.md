@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/runcmf/runtracy.svg?branch=master)](https://travis-ci.org/runcmf/runtracy)
-[![Coverage Status](https://coveralls.io/repos/github/runcmf/runtracy/badge.svg?branch=master)](https://coveralls.io/github/runcmf/runtracy?branch=master)
-[![Code Climate](https://codeclimate.com/github/runcmf/runtracy/badges/gpa.svg)](https://codeclimate.com/github/runcmf/runtracy)
+[![Build Status](https://travis-ci.org/semhoun/runtracy.svg?branch=master)](https://travis-ci.org/semhoun/runtracy)
+[![Coverage Status](https://coveralls.io/repos/github/semhoun/runtracy/badge.svg?branch=master)](https://coveralls.io/github/semhoun/runtracy?branch=master)
+[![Code Climate](https://codeclimate.com/github/semhoun/runtracy/badges/gpa.svg)](https://codeclimate.com/github/semhoun/runtracy)
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Software License][ico-license]][link-license]
@@ -49,7 +49,7 @@ now in package:
 **1.**
 
 ```bash
-$ composer require runcmf/runtracy
+$ composer require semhoun/runtracy
 ```
 
 **2.** goto 3 or if need Twig, Doctrine DBAL, Doctrine ORM, Eloquent ORM then:
@@ -125,7 +125,7 @@ $c['em'] = function ($c) {
 **3.** register middleware
 
 ```php
-$app->add(RunTracy\Middlewares\TracyMiddleware::createFromContainer($app));
+$app->add(RunTracy\Middlewares\TracyMiddleware($app));
 ```
 
 **4.** register route if you plan use PTY Console
@@ -134,7 +134,7 @@ $app->add(RunTracy\Middlewares\TracyMiddleware::createFromContainer($app));
 $app->post('/console', 'RunTracy\Controllers\RunTracyConsole:index');
 ```
 
-also copy you want `jquery.terminal.min.js` & `jquery.terminal.min.css`  from vendor/runcmf/runtracy/web and correct path in 'settings' below.
+also copy you want `jquery.terminal.min.js` & `jquery.terminal.min.css`  from vendor/semhoun/runtracy/web and correct path in 'settings' below.
 add from local or from CDN (https://code.jquery.com/) or copy/paste
 
 ```html
@@ -211,7 +211,7 @@ return [
         ]
 ```
 
-see config examples in vendor/runcmf/runtracy/Example
+see config examples in vendor/semhoun/runtracy/Example
 
 ![example](ss/panel_selector.png "Panel Selector")
 
@@ -297,18 +297,12 @@ RunTracy\Helpers\Profiler\Profiler::finish('App');
 ## Tests
 
 ```bash
-$ cd vendor/runcmf/runtracy
+$ cd vendor/semhoun/runtracy
 $ composer update
 $ vendor/bin/phpunit
 ```
 
-***
 
-## Security
-
-If you discover any security related issues, please email to 1f7.wizard( at )gmail.com instead of using the issue tracker.
-
-***
 
 ## Credits
 
@@ -337,14 +331,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[ico-version]: https://img.shields.io/packagist/v/runcmf/runtracy.svg
+[ico-version]: https://img.shields.io/packagist/v/semhoun/runtracy.svg
 
 [ico-license]: https://img.shields.io/badge/license-Apache%202-green.svg
 
-[ico-downloads]: https://img.shields.io/packagist/dt/runcmf/runtracy.svg
+[ico-downloads]: https://img.shields.io/packagist/dt/semhoun/runtracy.svg
 
-[link-packagist]: https://packagist.org/packages/runcmf/runtracy
+[link-packagist]: https://packagist.org/packages/semhoun/runtracy
 
 [link-license]: http://www.apache.org/licenses/LICENSE-2.0
 
-[link-downloads]: https://github.com/runcmf/runtracy
+[link-downloads]: https://github.com/semhoun/runtracy

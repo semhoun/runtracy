@@ -1,6 +1,6 @@
 {
-    "name": "runcmf/runtracy",
-    "description": "Slim Framework Debugger",
+    "name": "semhoun/runtracy",
+    "description": "Tracy for Slim4 Framework Debugger",
     "license": "Apache-2.0",
     "type": "library",
     "keywords": [
@@ -25,6 +25,11 @@
             "name": "Konstantin Kaluzhnikov",
             "email": "k.kaluzhnikov@gmail.com",
             "homepage": "https://github.com/EvilKraft"
+        },
+        {
+            "name": "Nathanael Semhoun",
+            "email": "nathanael@semhoun.net",
+            "homepage": "http://www.semhoun.net"
         }
     ],
     "require": {

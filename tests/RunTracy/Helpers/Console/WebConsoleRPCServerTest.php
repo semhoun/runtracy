@@ -123,12 +123,12 @@ class WebConsoleRPCServerTest extends BaseTestCase
         $console->setVar('homeDirectory', ($cfg['ConsoleHomeDirectory'] ?: ''));
 
         $ret = $console->getHomeDir('dev');
-        $this->assertRegexp('#\/runcmf\/#s', $ret);
+        $this->assertRegexp('#\/semhoun\/#s', $ret);
 
         // check if (is_string($this->homeDirectory))
         $console->setVar('homeDirectory', 123);
         $ret = $console->getHomeDir('dev');
-        $this->assertRegexp('#\/runcmf\/#s', $ret);
+        $this->assertRegexp('#\/semhoun\/#s', $ret);
 
         // return to def
         $console->setVar('homeDirectory', ($cfg['ConsoleHomeDirectory'] ?: ''));
@@ -164,15 +164,15 @@ class WebConsoleRPCServerTest extends BaseTestCase
         $ret = $console->login('dev', 'dev');
         $this->assertArrayHasKey('token', $ret);
         $this->assertArrayHasKey('environment', $ret);
-        // runcmf/
-        $this->assertRegexp('#runcmf\/#s', $ret['environment']['path']);
+        // semhoun/
+        $this->assertRegexp('#semhoun\/#s', $ret['environment']['path']);
 
         // chdir to one level up
         $cd = $console->cd($ret['token'], $ret['environment'], '../');
-        // check path not contain 'runcmf'
-        $this->assertTrue(strpos($cd['environment']['path'], 'runcmf') === false);
+        // check path not contain 'semhoun'
+        $this->assertTrue(strpos($cd['environment']['path'], 'semhoun') === false);
         // here 'vendor' must be in path
-        // travis path /home/travis/build/runcmf/runtracy/
+        // travis path /home/travis/build/semhoun/runtracy/
 //        $this->assertFalse(strpos($cd['environment']['path'], 'vendor') === false);
 
         // check completion

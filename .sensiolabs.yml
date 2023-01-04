@@ -1,6 +1,0 @@
-global_exclude_dirs:
-    - Example
-    - ss
-    - tests
-    - vendor
-    - web
