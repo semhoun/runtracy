@@ -12,7 +12,7 @@
         syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="RunTracy Tests Suite">
+        <testsuite name="SlimTracy Tests Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

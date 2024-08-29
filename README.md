@@ -1,11 +1,8 @@
-[![Build Status](https://travis-ci.org/semhoun/runtracy.svg?branch=master)](https://travis-ci.org/semhoun/runtracy)
 [![Coverage Status](https://coveralls.io/repos/github/semhoun/runtracy/badge.svg?branch=master)](https://coveralls.io/github/semhoun/runtracy?branch=master)
 [![Code Climate](https://codeclimate.com/github/semhoun/runtracy/badges/gpa.svg)](https://codeclimate.com/github/semhoun/runtracy)
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Software License][ico-license]][link-license]
-
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/2d080724-9e10-4770-9220-0678381eb341/big.png)](https://insight.sensiolabs.com/projects/2d080724-9e10-4770-9220-0678381eb341)
 
 # Slim Framework 4 Tracy Debugger Bar
 
@@ -125,13 +122,13 @@ $c['em'] = function ($c) {
 **3.** register middleware
 
 ```php
-$app->add(RunTracy\Middlewares\TracyMiddleware($app));
+$app->add(SlimTracy\Middlewares\TracyMiddleware($app, $tracySettings));
 ```
 
 **4.** register route if you plan use PTY Console
 
 ```php
-$app->post('/console', 'RunTracy\Controllers\RunTracyConsole:index');
+$app->post('/console', 'SlimTracy\Controllers\SlimTracyConsole:index');
 ```
 
 also copy you want `jquery.terminal.min.js` & `jquery.terminal.min.css`  from vendor/semhoun/runtracy/web and correct path in 'settings' below.
@@ -149,15 +146,11 @@ add from local or from CDN (https://code.jquery.com/) or copy/paste
 ```php
 use Tracy\Debugger;
 
-defined('DS') || define('DS', DIRECTORY_SEPARATOR);
-define('DIR', realpath(__DIR__ . '/../../') . DS);
-
-Debugger::enable(Debugger::DEVELOPMENT, DIR . 'var/log');
-//Debugger::enable(Debugger::PRODUCTION, DIR . 'var/log');
+Debugger::enable(Debugger::DEVELOPMENT);
 
 return [
     'settings' => [
-        'addContentLengthHeader' => false// debugbar possible not working with true
+                'addContentLengthHeader' => false// debugbar possible not working with true
     ... // ...
     ... // ...
 
@@ -251,35 +244,35 @@ if (PHP_SAPI == 'cli-server') {
 }
 
 require __DIR__ . '/../vendor/autoload.php';
-RunTracy\Helpers\Profiler\Profiler::enable();
-RunTracy\Helpers\Profiler\Profiler::start('App');
+SlimTracy\Helpers\Profiler\Profiler::enable();
+SlimTracy\Helpers\Profiler\Profiler::start('App');
 
 session_start();
 
-    RunTracy\Helpers\Profiler\Profiler::start('initApp');
+    SlimTracy\Helpers\Profiler\Profiler::start('initApp');
 // Instantiate the app
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new \Slim\App($settings);
-    RunTracy\Helpers\Profiler\Profiler::finish('initApp');
+    SlimTracy\Helpers\Profiler\Profiler::finish('initApp');
 
-    RunTracy\Helpers\Profiler\Profiler::start('initDeps');
+    SlimTracy\Helpers\Profiler\Profiler::start('initDeps');
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
-    RunTracy\Helpers\Profiler\Profiler::finish('initDeps');
+    SlimTracy\Helpers\Profiler\Profiler::finish('initDeps');
 
-    RunTracy\Helpers\Profiler\Profiler::start('initMiddlewares');
+    SlimTracy\Helpers\Profiler\Profiler::start('initMiddlewares');
 // Register middleware
 require __DIR__ . '/../src/middleware.php';
-    RunTracy\Helpers\Profiler\Profiler::finish('initMiddlewares');
+    SlimTracy\Helpers\Profiler\Profiler::finish('initMiddlewares');
 
-    RunTracy\Helpers\Profiler\Profiler::start('initRoutes');
+    SlimTracy\Helpers\Profiler\Profiler::start('initRoutes');
 // Register routes
 require __DIR__ . '/../src/routes.php';
-    RunTracy\Helpers\Profiler\Profiler::finish('initRoutes');
+    SlimTracy\Helpers\Profiler\Profiler::finish('initRoutes');
 
 // Run app
 $app->run();
-RunTracy\Helpers\Profiler\Profiler::finish('App');
+SlimTracy\Helpers\Profiler\Profiler::finish('App');
 ```
 
 ![example](ss/profiler_panel.png "Profiler Panel")
@@ -306,17 +299,14 @@ $ vendor/bin/phpunit
 
 ## Credits
 
-*   https://bitbucket.org/1f7
-*   https://github.com/1f7
-*   http://runetcms.ru
-*   http://runcmf.ru
+*   [https://github.com/runcmf/runtracy](https://github.com/runcmf/runtracy)
 
 ***
 
 ## License
 
 ```bash
-Copyright 2016 1f7.wizard@gmail.com
+Copyright 2024 nathanael@semhoun.net
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

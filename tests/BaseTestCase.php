@@ -81,7 +81,7 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
 //        require __DIR__ . '/../app/Config/Middleware.php';
         // Register routes
 //        require __DIR__ . '/../app/Config/Routes.php';
-        $app->post('/console', 'RunTracy\Controllers\RunTracyConsole:index');
+        $app->post('/console', 'SlimTracy\Controllers\SlimTracyConsole:index');
         // Process the application
         $response = $app->process($request, $response);
 

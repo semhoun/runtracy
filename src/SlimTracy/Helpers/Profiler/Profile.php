@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SlimTracy\Helpers\Profiler;
+
+use JsonSerializable;
+
+/**
+ * Profile.
+ *
+ * @author   Petr Knap <dev@petrknap.cz>
+ *
+ * @since    2015-12-19
+ *
+ * @license  https://github.com/petrknap/php-profiler/blob/master/LICENSE MIT
+ */
+class Profile implements JsonSerializable
+{
+    //region JSON keys
+    protected const ABSOLUTE_DURATION = 'absolute_duration';
+    protected const DURATION = 'duration';
+    protected const ABSOLUTE_MEMORY_USAGE_CHANGE = 'absolute_memory_usage_change';
+    protected const MEMORY_USAGE_CHANGE = 'memory_usage_change';
+    //endregion
+
+    public array $meta = [];
+
+    /**
+     * Absolute duration in seconds.
+     */
+    public float $absoluteDuration;
+
+    /**
+     * Duration in seconds.
+     */
+    public float $duration;
+
+    /**
+     * Absolute memory usage change in bytes.
+     */
+    public int $absoluteMemoryUsageChange;
+
+    /**
+     * Memory usage change in bytes.
+     */
+    public int $memoryUsageChange;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return array_merge(
+            $this->meta,
+            [
+                self::ABSOLUTE_DURATION => $this->absoluteDuration,
+                self::DURATION => $this->duration,
+                self::ABSOLUTE_MEMORY_USAGE_CHANGE => $this->absoluteMemoryUsageChange,
+                self::MEMORY_USAGE_CHANGE => $this->memoryUsageChange,
+            ]
+        );
+    }
+}

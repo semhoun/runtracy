@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright 2016 1f7.wizard@gmail.com
  *
@@ -18,11 +21,11 @@
 $c = $app->getContainer();
 
 // Twig
-$c['twig_profile'] = function () {
+$c['twig_profile'] = static function () {
     return new Twig_Profiler_Profile();
 };
 
-$c['view'] = function (\Slim\Container $c) {
+$c['view'] = static function (\Slim\Container $c) {
     $settings = $c->get('settings')['view'];
     $view = new \Slim\Views\Twig($settings['template_path'], $settings['twig']);
     // Add extensions
@@ -33,7 +36,7 @@ $c['view'] = function (\Slim\Container $c) {
 };
 
 // monolog
-$c['logger'] = function (\Slim\Container $c) {
+$c['logger'] = static function (\Slim\Container $c) {
     $settings = $c->get('settings')['logger'];
     $logger = new Monolog\Logger($settings['name']);
     $logger->pushProcessor(new Monolog\Processor\UidProcessor());
@@ -49,8 +52,8 @@ $c['logger'] = function (\Slim\Container $c) {
 };
 
 //Override the default Not Found Handler
-$c['notFoundHandler'] = function (\Slim\Container $c) {
-    return function ($request, $response) use ($c) {
+$c['notFoundHandler'] = static function (\Slim\Container $c) {
+    return static function ($request, $response) use ($c) {
         $c->view->offsetSet('erno', '404');
         $c->view->offsetSet('ermes', 'Page not found');
         $c->view->offsetSet('uri', $request->getUri());
@@ -58,8 +61,8 @@ $c['notFoundHandler'] = function (\Slim\Container $c) {
     };
 };
 //Override the default Not Allowed Handler
-$c['notAllowedHandler'] = function (\Slim\Container $c) {
-    return function ($request, $response, $methods) use ($c) {
+$c['notAllowedHandler'] = static function (\Slim\Container $c) {
+    return static function ($request, $response, $methods) use ($c) {
         $c->view->offsetSet('erno', '405');
         $c->view->offsetSet('ermes', 'Can not route with method{s}: ' . implode(', ', $methods));
         $c->view->offsetSet('uri', $request->getUri());
@@ -83,17 +86,15 @@ $c['notAllowedHandler'] = function (\Slim\Container $c) {
 //$capsule->bootEloquent();
 //$capsule::connection()->enableQueryLog();
 
-
 // Register Eloquent single connections
-$capsule = new \Illuminate\Database\Capsule\Manager;
+$capsule = new \Illuminate\Database\Capsule\Manager();
 $capsule->addConnection($cfg['settings']['db']['connections']['mysql']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 $capsule::connection()->enableQueryLog();
 
-
 // Both Doctrine DBAL & ORM
-$c['dbal'] = function () {
+$c['dbal'] = static function () {
     $conn = \Doctrine\DBAL\DriverManager::getConnection(
         [
             'driver' => 'pdo_mysql',
@@ -104,7 +105,7 @@ $c['dbal'] = function () {
             'port' => 3306,
             'charset' => 'utf8',
         ],
-        new \Doctrine\DBAL\Configuration
+        new \Doctrine\DBAL\Configuration()
     );
     // possible return or DBAL\Query\QueryBuilder or DBAL\Connection
     return $conn->createQueryBuilder();
@@ -112,7 +113,7 @@ $c['dbal'] = function () {
 
 // this example from https://github.com/vhchung/slim3-skeleton-mvc
 // doctrine EntityManager
-$c['em'] = function ($c) {
+$c['em'] = static function ($c) {
     $settings = $c->get('settings');
     $config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
         $settings['doctrine']['meta']['entity_path'],

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright 2016 1f7.wizard@gmail.com
  *
@@ -53,7 +56,7 @@ return [
                     'password' => '123',
                     'charset' => 'utf8',
                     'collation' => 'utf8_unicode_ci',
-                    'prefix' => 'mybb_'
+                    'prefix' => 'mybb_',
                 ],
                 'pgsql' => [
                     'driver' => 'pgsql',
@@ -86,10 +89,10 @@ return [
             'name' => 'RunCMF',
             'level' => \Monolog\Logger::DEBUG,
             'path' => DIR . 'var/log/app.log',
-            'maxFiles' => 15
+            'maxFiles' => 15,
         ],
         'modules' => [// register modules
-            'forum' => 'RunBB\Init'
+            'forum' => 'RunBB\Init',
         ],
         'tracy' => [
             'showPhpInfoPanel' => 0,
@@ -116,7 +119,7 @@ return [
                 'ConsoleNoLogin' => 0,
                 // Multi-user credentials values( ['user1' => 'password1', 'user2' => 'password2'] )
                 'ConsoleAccounts' => [
-                    'dev' => '34c6fceca75e456f25e7e99531e2425c6c1de443'// = sha1('dev')
+                    'dev' => '34c6fceca75e456f25e7e99531e2425c6c1de443',// = sha1('dev')
                 ],
                 // Password hash algorithm (password must be hashed) values('md5', 'sha256' ...)
                 'ConsoleHashAlgorithm' => 'sha1',
@@ -134,10 +137,10 @@ return [
                     'show' => [
                         'memoryUsageChart' => 1, // or false
                         'shortProfiles' => true, // or false
-                        'timeLines' => true // or false
-                    ]
-                ]
-            ]
-        ]
-    ]
+                        'timeLines' => true, // or false
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];

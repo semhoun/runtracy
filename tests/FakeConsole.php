@@ -18,7 +18,7 @@
 
 namespace Tests;
 
-use RunTracy\Helpers\Console\WebConsoleRPCServer;
+use SlimTracy\Helpers\Console\WebConsoleRPCServer;
 
 class FakeConsole extends WebConsoleRPCServer
 {
