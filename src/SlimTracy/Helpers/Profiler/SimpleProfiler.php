@@ -19,13 +19,13 @@ use SlimTracy\Helpers\Profiler\Exception\ProfilerException;
 class SimpleProfiler
 {
     //region Meta keys
-    protected const START_LABEL = 'start_label'; // string
-    protected const START_TIME = 'start_time'; // float start time in seconds
-    protected const START_MEMORY_USAGE = 'start_memory_usage'; // int amount of used memory at start in bytes
-    protected const FINISH_LABEL = 'finish_label'; // string
-    protected const FINISH_TIME = 'finish_time'; // float finish time in seconds
-    protected const FINISH_MEMORY_USAGE = 'finish_memory_usage'; // int amount of used memory at finish in bytes
-    protected const TIME_OFFSET = 'time_offset'; // float time offset in seconds
+    public const START_LABEL = 'start_label'; // string
+    public const START_TIME = 'start_time'; // float start time in seconds
+    public const START_MEMORY_USAGE = 'start_memory_usage'; // int amount of used memory at start in bytes
+    public const FINISH_LABEL = 'finish_label'; // string
+    public const FINISH_TIME = 'finish_time'; // float finish time in seconds
+    public const FINISH_MEMORY_USAGE = 'finish_memory_usage'; // int amount of used memory at finish in bytes
+    public const TIME_OFFSET = 'time_offset'; // float time offset in seconds
     protected const MEMORY_USAGE_OFFSET = 'memory_usage_offset'; // int amount of memory usage offset in bytes
     //endregion
 
