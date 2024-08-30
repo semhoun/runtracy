@@ -37,7 +37,7 @@
         "ext-mbstring": "*",
         "ext-json": "*",
         "tracy/tracy": "^2.10",
-        "slim/slim": "^4.9"
+        "slim/slim": "^4.9",
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.6",
@@ -47,7 +47,7 @@
         "twig/twig": "^3.3",
         "slim/twig-view": "^3.3",
         "j4mie/idiorm": "^1.5",
-        "doctrine/orm": "^2.11"
+        "doctrine/orm": "^3"
     },
     "autoload": {
         "psr-4": {

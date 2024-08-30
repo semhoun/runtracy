@@ -46,7 +46,7 @@ now in package:
 **1.**
 
 ```bash
-$ composer require semhoun/runtracy
+$ composer require semhoun/slim-racy
 ```
 
 **2.** goto 3 or if need Twig, Doctrine DBAL, Doctrine ORM, Eloquent ORM then:

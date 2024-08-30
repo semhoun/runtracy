@@ -103,7 +103,7 @@ class DoctrinePanel implements IBarPanel
                 number_format($log['executionMS'], 8),
                 $log['sql'],
                 $this->formatArrayData($log['params']),
-                $this->transformNumericType($this->formatArrayData($log['types']))
+                $this->transformType($log['types'])
             );
         }
         $this->count = $cnt;
@@ -113,39 +113,32 @@ class DoctrinePanel implements IBarPanel
     }
 
     /**
-     * function from macfja/tracy-doctrine-sql.
-     *
      * @param $data
      */
-    protected function formatArrayData($data): mixed
+    protected function formatArrayData($data): string
     {
-        return preg_replace(
-            '#^\s{4}#m',
-            '', // Remove 1rst "tab" of the JSON result
-            substr(
-                json_encode($data, \JSON_PRETTY_PRINT | \JSON_NUMERIC_CHECK),
-                2, // Remove "[\n"
-                -2 // Remove "\n]"
-            )
-        );
+        $str;
+        $idx = 1;
+        foreach ($data as $entry) {
+            $str = $idx . ': '. $entry;
+            if ($idx > 1) $str .=  "\n";
+            $idx++;
+        }
+        return $str;
     }
 
     /**
-     * function from macfja/tracy-doctrine-sql.
-     *
      * @param $data
      */
-    protected function transformNumericType($data): mixed
+    protected function transformType($data): string
     {
-        $search = [
-            '#\b101\b#', // Array of int
-            '#\b102\b#', // Array of string
-        ];
-        $replace = [
-            'integer[]', // Array of int
-            'string[]', // Array of string
-        ];
-
-        return preg_replace($search, $replace, $data);
+        $str;
+        $idx = 1;
+        foreach ($data as $entry) {
+            $str = $idx . ': '. $entry->name;
+            if ($idx > 1) $str .=  "\n";
+            $idx++;
+        }
+        return $str;
     }
 }

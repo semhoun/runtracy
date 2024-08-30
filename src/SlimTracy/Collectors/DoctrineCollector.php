@@ -20,11 +20,6 @@ declare(strict_types=1);
 
 namespace SlimTracy\Collectors;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Logging\DebugStack;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder as OrmQueryBuilder;
 use Exception;
 use Psr\Container\ContainerInterface as Container;
 
@@ -33,9 +28,9 @@ use Psr\Container\ContainerInterface as Container;
  */
 class DoctrineCollector
 {
-    /**
-     * DoctrineCollector constructor.
-     *
+    /*
+     * DoctrineCollector constructor
+
      * @throws Exception
      */
     public function __construct(?Container $c = null, string $containerName = '')
@@ -43,36 +38,21 @@ class DoctrineCollector
         if ($c === null || ! $c->has($containerName)) {
             return 0;
         }
-        $dm = $c->get($containerName);
 
-        // check instance
-        switch (true) {
-            case $dm instanceof Connection:
-                $conf = $dm->getConfiguration();
-
-                break;
-
-            case $dm instanceof EntityManager:
-            case $dm instanceof QueryBuilder:
-                $conf = $dm->getConnection()->getConfiguration();
-
-                break;
-
-            case $dm instanceof OrmQueryBuilder:
-                $conf = $dm->getEntityManager()->getConnection()->getConfiguration();
-
-                break;
-
-            default:
-                throw new Exception('Neither Doctrine DBAL neither ORM not found');
+        $conf = $c->get($containerName);
+        if (!($conf instanceof \Doctrine\DBAL\Configuration)) {
+            throw new Exception('Neither Doctrine DBAL neither ORM Configuration not found');
         }
 
-        $conf->setSQLLogger(new DebugStack());
+        $queries = new DoctrineLogger\Queries();
+        $middleware = new DoctrineLogger\Middleware($queries);
+
+        $conf->setMiddlewares([$middleware] );
 
         if (method_exists($c, 'set')) {
-            $c->set('doctrineConfig', $conf);
+            $c->set('tracy.doctrineQueries', $queries);
         } else {
-            $c['doctrineConfig'] = $conf;
+            $c['tracy.doctrineQueries'] = $queries;
         }
 
         return true;
