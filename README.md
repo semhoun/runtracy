@@ -25,7 +25,7 @@ now in package:
 | Slim Response | RAW data |
 | Slim Router | RAW data |
 | **DB** | - |
-| Doctrine [ORM](https://github.com/doctrine/doctrine2) or [DBAL](https://github.com/doctrine/dbal) | time, sql, params, types. panel & collector for both. see config example below |
+| Doctrine [ORM](https://github.com/doctrine/doctrine2) or [DBAL](https://github.com/doctrine/dbal) | time, sql, params, types. panel & collector for both. **Note:** Need a Configuration instance available in DI, and must be the same used by Doctrine. |
 | [Idiorm](https://github.com/j4mie/idiorm) | time, sql. panel & collector. **Note:** Idiorm support only one collector and if you use own this will not work. |
 | [Illuminate Database](https://github.com/illuminate/database) | sql, bindings |
 | **Template** | - |
@@ -228,51 +228,77 @@ see config examples in vendor/semhoun/runtracy/Example
 
 ![example](ss/console_panel.png "PTY Console Panel")
 
-Profiler Example in new installed [slim-skeleton](https://packagist.org/packages/slim/slim-skeleton)
+Profiler Example in [slim-skeleton-mvc](https://github.com/semhoun/slim-skeleton-mvc)
 `public/index.php`
 
 ```php
 <?php
-if (PHP_SAPI == 'cli-server') {
-    // To help the built-in PHP dev server, check if the request was actually for
-    // something which should probably be served as a static file
-    $url  = parse_url($_SERVER['REQUEST_URI']);
-    $file = __DIR__ . $url['path'];
-    if (is_file($file)) {
-        return false;
-    }
-}
+use App\Services\Settings;
+use DI\ContainerBuilder;
 
-require __DIR__ . '/../vendor/autoload.php';
+// Set the absolute path to the root directory.
+$rootPath = realpath(__DIR__ . '/..');
+
+// Include the composer autoloader.
+include_once $rootPath . '/vendor/autoload.php';
+
 SlimTracy\Helpers\Profiler\Profiler::enable();
 SlimTracy\Helpers\Profiler\Profiler::start('App');
 
-session_start();
+// At this point the container has not been built. We need to load the settings manually.
+SlimTracy\Helpers\Profiler\Profiler::start('loadSettings');
+$settings = Settings::load();
+SlimTracy\Helpers\Profiler\Profiler::finish('loadSettings');
 
-    SlimTracy\Helpers\Profiler\Profiler::start('initApp');
-// Instantiate the app
-$settings = require __DIR__ . '/../src/settings.php';
-$app = new \Slim\App($settings);
-    SlimTracy\Helpers\Profiler\Profiler::finish('initApp');
+// DI Builder
+$containerBuilder = new ContainerBuilder();
 
-    SlimTracy\Helpers\Profiler\Profiler::start('initDeps');
+if (! $settings->get('debug')) {
+    // Compile and cache container.
+    $containerBuilder->enableCompilation($settings->get('cache_dir').'/container');
+}
+
 // Set up dependencies
-require __DIR__ . '/../src/dependencies.php';
-    SlimTracy\Helpers\Profiler\Profiler::finish('initDeps');
+SlimTracy\Helpers\Profiler\Profiler::start('initDeps');
+$containerBuilder->addDefinitions($rootPath.'/config/dependencies.php');
+SlimTracy\Helpers\Profiler\Profiler::finish('initDeps');
 
-    SlimTracy\Helpers\Profiler\Profiler::start('initMiddlewares');
+// Build PHP-DI Container instance
+ SlimTracy\Helpers\Profiler\Profiler::start('diBuild');
+$container = $containerBuilder->build();
+SlimTracy\Helpers\Profiler\Profiler::finish('diBuild');
+
+// Instantiate the app
+$app = \DI\Bridge\Slim\Bridge::create($container);
+
 // Register middleware
-require __DIR__ . '/../src/middleware.php';
-    SlimTracy\Helpers\Profiler\Profiler::finish('initMiddlewares');
+SlimTracy\Helpers\Profiler\Profiler::start('initMiddleware');
+$middleware = require $rootPath . '/config/middleware.php';
+$middleware($app);
+SlimTracy\Helpers\Profiler\Profiler::finish('initMiddleware');
 
-    SlimTracy\Helpers\Profiler\Profiler::start('initRoutes');
 // Register routes
-require __DIR__ . '/../src/routes.php';
-    SlimTracy\Helpers\Profiler\Profiler::finish('initRoutes');
+SlimTracy\Helpers\Profiler\Profiler::start('initRoutes');
+$routes = require $rootPath . '/config/routes.php';
+$routes($app);
+SlimTracy\Helpers\Profiler\Profiler::finish('initRoutes');
 
-// Run app
+// Set the cache file for the routes. Note that you have to delete this file
+// whenever you change the routes.
+if (! $settings->get('debug')) {
+    $app->getRouteCollector()->setCacheFile($settings->get('cache_dir').'/route');
+}
+
+// Add the routing middleware.
+$app->addRoutingMiddleware();
+
+// Add Body Parsing Middleware
+$app->addBodyParsingMiddleware();
+
+// Run the app
 $app->run();
 SlimTracy\Helpers\Profiler\Profiler::finish('App');
+
 ```
 
 ![example](ss/profiler_panel.png "Profiler Panel")
