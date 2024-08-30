@@ -27,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\App;
 use SlimTracy\Collectors\DoctrineCollector;
 use SlimTracy\Collectors\IdormCollector;
 use SlimTracy\Helpers\ConsolePanel;
@@ -45,7 +46,6 @@ use SlimTracy\Helpers\SlimRouterPanel;
 use SlimTracy\Helpers\TwigPanel;
 use SlimTracy\Helpers\VendorVersionsPanel;
 use SlimTracy\Helpers\XDebugHelper;
-use Slim\App;
 use Tracy\Debugger;
 use Tracy\Dumper;
 
@@ -65,11 +65,10 @@ class TracyMiddleware implements MiddlewareInterface
     public function __construct(
         App $app,
         array $settings
-    )
-    {
+    ) {
         include_once realpath(__DIR__ . '/../') . '/shortcuts.php';
 
-        error_log("MD");
+        error_log('MD');
         $this->container = $app->getContainer();
         $this->versions = [
             'slim' => App::VERSION,

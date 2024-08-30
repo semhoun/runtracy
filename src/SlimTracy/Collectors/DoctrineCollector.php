@@ -40,14 +40,14 @@ class DoctrineCollector
         }
 
         $conf = $c->get($containerName);
-        if (!($conf instanceof \Doctrine\DBAL\Configuration)) {
+        if (! ($conf instanceof \Doctrine\DBAL\Configuration)) {
             throw new Exception('Neither Doctrine DBAL neither ORM Configuration not found');
         }
 
         $queries = new DoctrineLogger\Queries();
         $middleware = new DoctrineLogger\Middleware($queries);
 
-        $conf->setMiddlewares([$middleware] );
+        $conf->setMiddlewares([$middleware]);
 
         if (method_exists($c, 'set')) {
             $c->set('tracy.doctrineQueries', $queries);

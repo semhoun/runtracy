@@ -121,7 +121,9 @@ class DoctrinePanel implements IBarPanel
         $idx = 1;
         foreach ($data as $entry) {
             $str = $idx . ': '. $entry;
-            if ($idx > 1) $str .=  "\n";
+            if ($idx > 1) {
+                $str .= "\n";
+            }
             $idx++;
         }
         return $str;
@@ -136,7 +138,9 @@ class DoctrinePanel implements IBarPanel
         $idx = 1;
         foreach ($data as $entry) {
             $str = $idx . ': '. $entry->name;
-            if ($idx > 1) $str .=  "\n";
+            if ($idx > 1) {
+                $str .= "\n";
+            }
             $idx++;
         }
         return $str;

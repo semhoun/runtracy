@@ -11,10 +11,10 @@ use Doctrine\DBAL\ParameterType;
 
 final class Statement extends AbstractStatementMiddleware
 {
-    /** @var mixed[] */
+    /** @var array<mixed> */
     private array $params = [];
 
-    /** @var ParameterType[] */
+    /** @var array<ParameterType> */
     private array $types = [];
 
     /** @internal This statement can be only instantiated by its connection. */
@@ -26,7 +26,7 @@ final class Statement extends AbstractStatementMiddleware
     public function bindValue(int|string $param, mixed $value, ParameterType $type): void
     {
         $this->params[$param] = $value;
-        $this->types[$param]  = $type;
+        $this->types[$param] = $type;
 
         parent::bindValue($param, $value, $type);
     }

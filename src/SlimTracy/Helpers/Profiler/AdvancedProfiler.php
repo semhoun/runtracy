@@ -63,9 +63,6 @@ class AdvancedProfiler extends SimpleProfiler
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function start(?string $labelOrFormat = null, mixed $args = null): bool
     {
         if (static::$enabled) {
@@ -80,9 +77,6 @@ class AdvancedProfiler extends SimpleProfiler
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function finish(?string $labelOrFormat = null, mixed $args = null): Profile|bool
     {
         if (static::$enabled) {
