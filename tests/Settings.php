@@ -95,7 +95,6 @@ return [
             'showSlimResponsePanel' => 1,
             'showSlimContainer' => 0,
             'showEloquentORMPanel' => 0,
-            'showIdiormPanel' => 1,
             'showDoctrinePanel' => 'dbal',// here also enable logging and you must enter your Doctrine container name
             // and also as above show or not panel you decide in browser in panel selector
             'showTwigPanel' => 0,

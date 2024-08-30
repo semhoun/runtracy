@@ -26,7 +26,6 @@ now in package:
 | Slim Router | RAW data |
 | **DB** | - |
 | Doctrine [ORM](https://github.com/doctrine/doctrine2) or [DBAL](https://github.com/doctrine/dbal) | time, sql, params, types. panel & collector for both. **Note:** Need a Configuration instance available in DI, and must be the same used by Doctrine. |
-| [Idiorm](https://github.com/j4mie/idiorm) | time, sql. panel & collector. **Note:** Idiorm support only one collector and if you use own this will not work. |
 | [Illuminate Database](https://github.com/illuminate/database) | sql, bindings |
 | **Template** | - |
 | [Twig](https://github.com/twigphp/Twig) | \Twig\Profiler\Dumper\HtmlDumper() |
@@ -163,10 +162,7 @@ return [
             'showSlimContainer' => 0,
             'showEloquentORMPanel' => 0,
             'showTwigPanel' => 0,
-            'showIdiormPanel' => 0,// > 0 mean you enable logging
-            // but show or not panel you decide in browser in panel selector
-            'showDoctrinePanel' => 'em',// here also enable logging and you must enter your Doctrine container name
-            // and also as above show or not panel you decide in browser in panel selector
+            'showDoctrinePanel' => 'em',
             'showProfilerPanel' => 0,
             'showVendorVersionsPanel' => 0,
             'showXDebugHelper' => 0,
@@ -303,14 +299,6 @@ SlimTracy\Helpers\Profiler\Profiler::finish('App');
 
 ![example](ss/profiler_panel.png "Profiler Panel")
 
-![idormDBAL](ss/idiorm_and_dbal.png "Idiorm and Doctrine DBAL Panels")
-
-***
-
-## HOWTO
-
-[how-open-files-in-ide-from-debugger](https://pla.nette.org/en/how-open-files-in-ide-from-debugger)
-
 ***
 
 ## Tests
@@ -326,13 +314,15 @@ $ vendor/bin/phpunit
 ## Credits
 
 *   [https://github.com/runcmf/runtracy](https://github.com/runcmf/runtracy)
+*   [https://github.com/semhoun/slim-tracy](https://github.com/semhoun/slim-tracy)
 
 ***
 
 ## License
 
 ```bash
-Copyright 2024 nathanael@semhoun.net
+Copyright 2016-2022 1f7.wizard@gmail.com.
+Copyright 2024 Nathanaël Semhoun (nathanael@semhoun.net).
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

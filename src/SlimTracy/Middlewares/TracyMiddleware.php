@@ -33,7 +33,6 @@ use SlimTracy\Collectors\IdormCollector;
 use SlimTracy\Helpers\ConsolePanel;
 use SlimTracy\Helpers\DoctrinePanel;
 use SlimTracy\Helpers\EloquentORMPanel;
-use SlimTracy\Helpers\IdiormPanel;
 use SlimTracy\Helpers\IncludedFiles;
 use SlimTracy\Helpers\PanelSelector;
 use SlimTracy\Helpers\PhpInfoPanel;
@@ -103,9 +102,6 @@ class TracyMiddleware implements MiddlewareInterface
         if (! class_exists('\Doctrine\DBAL\Connection')) {
             unset($this->defcfg['showDoctrinePanel']);
         }
-        if (! class_exists('\ORM')) {
-            unset($this->defcfg['showIdiormPanel']);
-        }
         if (! class_exists('\Illuminate\Database\Capsule\Manager')) {
             unset($this->defcfg['showEloquentORMPanel']);
         }
@@ -121,9 +117,9 @@ class TracyMiddleware implements MiddlewareInterface
             ));
         }
         if (isset($cfg['showTwigPanel']) && $cfg['showTwigPanel']) {
-            if ($this->container->has('twig_profile')) {
+            if ($this->container->has(\Twig\Profiler\Profile::class)) {
                 Debugger::getBar()->addPanel(new TwigPanel(
-                    $this->container->get('twig_profile'),
+                    $this->container->get(\Twig\Profiler\Profile::class),
                     $this->versions
                 ));
             }
@@ -189,11 +185,6 @@ class TracyMiddleware implements MiddlewareInterface
                 $this->defcfg['configs']['ProfilerPanel']
             ));
         }
-        if (isset($cfg['showIdiormPanel']) && $cfg['showIdiormPanel'] && class_exists('\ORM')) {
-            Debugger::getBar()->addPanel(new IdiormPanel(
-                $this->versions
-            ));
-        }
         if (
             isset($cfg['showDoctrinePanel'])
             && $cfg['showDoctrinePanel']
@@ -223,13 +214,6 @@ class TracyMiddleware implements MiddlewareInterface
      */
     private function runCollectors(): void
     {
-        if (isset($this->defcfg['showIdiormPanel']) && $this->defcfg['showIdiormPanel'] > 0) {
-            if (class_exists('\ORM')) {
-                // no return values
-                new IdormCollector();
-            }
-        }
-
         if (isset($this->defcfg['showDoctrinePanel']) && class_exists('\Doctrine\DBAL\Connection')) {
             new DoctrineCollector(
                 $this->container,

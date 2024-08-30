@@ -46,7 +46,6 @@
         "illuminate/database": "^10.0",
         "twig/twig": "^3.3",
         "slim/twig-view": "^3.3",
-        "j4mie/idiorm": "^1.5",
         "doctrine/orm": "^3"
     },
     "autoload": {

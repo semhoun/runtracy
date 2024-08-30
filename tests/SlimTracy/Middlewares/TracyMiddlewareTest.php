@@ -40,7 +40,7 @@ class TracyMiddlewareTest extends BaseTestCase
         $cookie .= '["showPhpInfoPanel","showSlimRouterPanel","showSlimEnvironmentPanel",' .
             '"showSlimRequestPanel","showSlimResponsePanel","showSlimContainer",' .
             '"showEloquentORMPanel","showTwigPanel","showProfilerPanel","showVendorVersionsPanel"' .
-            ',"showXDebugHelper","showIncludedFiles","showConsolePanel","showIdiormPanel","showDoctrinePanel"]';
+            ',"showXDebugHelper","showIncludedFiles","showConsolePanel","showDoctrinePanel"]';
 
         $environment = \Slim\Http\Environment::mock(
             [
