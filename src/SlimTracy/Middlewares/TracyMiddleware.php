@@ -153,7 +153,7 @@ class TracyMiddleware implements MiddlewareInterface
 
         if (isset($cfg['showSlimRequestPanel']) && $cfg['showSlimRequestPanel']) {
             Debugger::getBar()->addPanel(new SlimRequestPanel(
-                Dumper::toHtml($handler),
+                Dumper::toHtml($request),
                 $this->versions
             ));
         }
