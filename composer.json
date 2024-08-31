@@ -39,6 +39,7 @@
         "slim/slim": "^4.9"
     },
     "require-dev": {
+		"nunomaduro/phpinsights": "^2.11",
         "phpunit/phpunit": "^10.0",
         "illuminate/database": "^10.0",
         "twig/twig": "^3.3",
