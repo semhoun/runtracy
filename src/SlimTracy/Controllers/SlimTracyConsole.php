@@ -20,25 +20,21 @@ declare(strict_types=1);
 
 namespace SlimTracy\Controllers;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use SlimTracy\Helpers\Console\WebConsoleRPCServer;
 
 class SlimTracyConsole extends WebConsoleRPCServer
 {
-    private $ci;
-
-    public function __construct(ContainerInterface $ci)
+    public function __construct(private ContainerInterface $ci)
     {
         parent::__construct();
-
-        $this->ci = $ci;
     }
 
-    public function index(Request $request, Response $response)
+    public function index(Request $request, Response $response): Response
     {
-        $cfg = $this->ci->get('settings')['tracy']['configs'];
+        $cfg = $this->ci->get('tracy.settings')['configs'];
 
         $this->noLogin = $cfg['ConsoleNoLogin'] ?: false;
         foreach ($cfg['ConsoleAccounts'] as $u => $p) {
@@ -47,20 +43,23 @@ class SlimTracyConsole extends WebConsoleRPCServer
         $this->passwordHashAlgorithm = $cfg['ConsoleHashAlgorithm'] ?: '';
         $this->homeDirectory = $cfg['ConsoleHomeDirectory'] ?: '';
 
-        $ConsoleResponce = $this->execute();
+        $ConsoleResponse = $this->execute();
 
-        if ($cfg['ConsoleFromEncoding']) {
-            $ConsoleResponce['result']['output'] = mb_convert_encoding(
-                $ConsoleResponce['result']['output'],
+        if ($cfg['ConsoleFromEncoding'] && $cfg['ConsoleFromEncoding'] != 'UTF-8') {
+            $ConsoleResponse['result']['output'] = mb_convert_encoding(
+                $ConsoleResponse['result']['output'],
                 'UTF-8',
                 $cfg['ConsoleFromEncoding']
             );
         }
 
-        return $response->withJson(
-            $ConsoleResponce,
-            null,
-            \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_NUMERIC_CHECK
+        $response = $response->withHeader('Content-Type', 'application/json');
+        $response->getBody()->write(
+            (string) json_encode(
+                $ConsoleResponse,
+                JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR
+            )
         );
+        return $response;
     }
 }

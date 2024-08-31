@@ -1,8 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/semhoun/runtracy/badge.svg?branch=master)](https://coveralls.io/github/semhoun/runtracy?branch=master)
-[![Code Climate](https://codeclimate.com/github/semhoun/runtracy/badges/gpa.svg)](https://codeclimate.com/github/semhoun/runtracy)
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Total Downloads][ico-downloads]][link-downloads]
-[![Software License][ico-license]][link-license]
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/62644bc058af464eb2cfcf564c3500d6)](https://www.codacy.com/gh/semhoun/slim-skeleton-mvc/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=semhoun/slim-tracy&amp;utm_campaign=Badge_Grade)[![Latest Stable Version](http://poser.pugx.org/semhoun/runtracy/v)](https://packagist.org/packages/semhoun/slim-tracy) [![Total Downloads](http://poser.pugx.org/semhoun/slim-tracy/downloads)](https://packagist.org/packages/semhoun/slim-tracy) [![Latest Unstable Version](http://poser.pugx.org/semhoun/slim-tracy/v/unstable)](https://packagist.org/packages/semhoun/slim-tracy) [![License](http://poser.pugx.org/semhoun/slim-tracy/license)](https://packagist.org/packages/semhoun/slim-tracy) [![PHP Version Require](http://poser.pugx.org/semhoun/slim-tracy/require/php)](https://packagist.org/packages/semhoun/slim-tracy)
 
 # Slim Framework 4 Tracy Debugger Bar
 
@@ -59,23 +55,63 @@ $ composer require slim/twig-view
 $ composer require illuminate/database
 ```
 
-**2.2** add to your dependencies (Twig, Twig\_Profiler) and/or Eloquent ORM like:
+**2.2** add to your dependencies 
+
+**2.2.1** (Twig, Twig\_Profiler) and/or Eloquent ORM like:
 
 ```php
 // Twig
-$c['twig_profile'] = function () {
-    return new \Twig\Profiler\Profile();
-};
+return [
+    Twig::class => static function (Settings $settings, \Twig\Profiler\Profile $profile): Twig {
+        $view = Twig::create($settings->get('view.template_path'), $settings->get('view.twig'));
+        if ($settings->get('debug')) {
+            // Add extensions
+            $view->addExtension(new \Twig\Extension\ProfilerExtension($profile));
+            $view->addExtension(new \Twig\Extension\DebugExtension());
+        }
+        return $view;
+    },
 
-$c['view'] = function ($c) {
-    $settings = $c->get('settings')['view'];
-    $view = new \Slim\Views\Twig::create($settings['template_path'], $settings['twig']);
-    // Add extensions
-    $view->addExtension(new \Twig\Extension\ProfilerExtension($c['twig_profile']));
-    $view->addExtension(new \Twig\Extension\DebugExtension());
-    return $view;
-};
+    // Doctrine DBAL and ORM
+    \Doctrine\DBAL\Connection::class => static function (Settings $settings, Doctrine\ORM\Configuration $conf): Doctrine\DBAL\Connection {
+        return \Doctrine\DBAL\DriverManager::getConnection($settings->get('doctrine.connection'), $conf);
+    },
+    // Doctrine Config used by entity manager and Tracy
+    \Doctrine\ORM\Configuration::class => static function (Settings $settings): Doctrine\ORM\Configuration {
+        if ($settings->get('debug')) {
+            $queryCache = new ArrayAdapter();
+            $metadataCache = new ArrayAdapter();
+        } else {
+            $queryCache = new PhpFilesAdapter('queries', 0, $settings->get('cache_dir'));
+            $metadataCache = new PhpFilesAdapter('metadata', 0, $settings->get('cache_dir'));
+        }
 
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCache($metadataCache);
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AttributeDriver($settings->get('doctrine.entity_path'), true);
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setQueryCache($queryCache);
+        $config->setProxyDir($settings->get('cache_dir') . '/proxy');
+        $config->setProxyNamespace('App\Proxies');
+
+        if ($settings->get('debug')) {
+            $config->setAutoGenerateProxyClasses(true);
+        } else {
+            $config->setAutoGenerateProxyClasses(false);
+        }
+
+        return $config;
+    },
+    // Doctrine EntityManager.
+    EntityManager::class => static function (\Doctrine\ORM\Configuration $config, \Doctrine\DBAL\Connection $connection): EntityManager {
+        return new EntityManager($connection, $config);
+    },
+	EntityManagerInterface::class => DI\get(EntityManager::class),
+]
+```
+
+**2.2.2** Eloquent ORM like:
+```php
 // Register Eloquent single connection
 $capsule = new \Illuminate\Database\Capsule\Manager;
 $capsule->addConnection($cfg['settings']['db']['connections']['mysql']);
@@ -83,39 +119,6 @@ $capsule->setAsGlobal();
 $capsule->bootEloquent();
 $capsule::connection()->enableQueryLog();
 
-// Doctrine DBAL
-$c['dbal'] = function () {
-    $conn = \Doctrine\DBAL\DriverManager::getConnection(
-        [
-            'driver' => 'pdo_mysql',
-            'host' => '127.0.0.1',
-            'user' => 'dbuser',
-            'password' => '123',
-            'dbname' => 'bookshelf',
-            'port' => 3306,
-            'charset' => 'utf8',
-        ],
-        new \Doctrine\DBAL\Configuration
-    );
-    // possible return or DBAL\Query\QueryBuilder or DBAL\Connection
-    return $conn->createQueryBuilder();
-};
-
-// Doctrine ORM
-// this example from https://github.com/vhchung/slim3-skeleton-mvc
-// doctrine EntityManager
-$c['em'] = function ($c) {
-    $settings = $c->get('settings');
-    $config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
-        $settings['doctrine']['meta']['entity_path'],
-        $settings['doctrine']['meta']['auto_generate_proxies'],
-        $settings['doctrine']['meta']['proxy_dir'],
-        $settings['doctrine']['meta']['cache'],
-        false
-    );
-    // possible return or ORM\EntityManager or ORM\QueryBuilder
-    return \Doctrine\ORM\EntityManager::create($settings['doctrine']['connection'], $config);
-};
 ```
 
 **3.** register middleware
@@ -130,13 +133,17 @@ $app->add(SlimTracy\Middlewares\TracyMiddleware($app, $tracySettings));
 $app->post('/console', 'SlimTracy\Controllers\SlimTracyConsole:index');
 ```
 
-also copy you want `jquery.terminal.min.js` & `jquery.terminal.min.css`  from vendor/semhoun/runtracy/web and correct path in 'settings' below.
-add from local or from CDN (https://code.jquery.com/) or copy/paste
+also copy you want `jquery.terminal.min.js` & `jquery.terminal.min.css`  from vendor/semhoun/runtracy/web and correct path in 'settings' below, or set config with CDN. 
+```php
+'ConsoleTerminalJs' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.42.2/js/jquery.terminal.min.js',
+'ConsoleTerminalCss' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.42.2/css/jquery.terminal.min.css',
+```
 
+add jquery from local or from CDN (https://code.jquery.com/) or copy/paste
 ```html
 <script
-    src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
     crossorigin="anonymous"></script>
 ```
 
@@ -162,7 +169,7 @@ return [
             'showSlimContainer' => 0,
             'showEloquentORMPanel' => 0,
             'showTwigPanel' => 0,
-            'showDoctrinePanel' => 'em',
+            'showDoctrinePanel' => 0,
             'showProfilerPanel' => 0,
             'showVendorVersionsPanel' => 0,
             'showXDebugHelper' => 0,
@@ -171,6 +178,8 @@ return [
             'configs' => [
                 // XDebugger IDE key
                 'XDebugHelperIDEKey' => 'PHPSTORM',
+                 // Activate the console
+                 'ConsoleEnable' => 1,
                 // Disable login (don't ask for credentials, be careful) values( 1 || 0 )
                 'ConsoleNoLogin' => 0,
                 // Multi-user credentials values( ['user1' => 'password1', 'user2' => 'password2'] )
@@ -195,7 +204,12 @@ return [
                         'shortProfiles' => true, // or false
                         'timeLines' => true // or false
                     ]
-                ]
+                ],
+                'Container' => [
+                // Container entry name
+                    'Doctrine' => \Doctrine\ORM\Configuration::class, // must be a configuration DBAL or ORM
+                    'Twig' => \Twig\Profiler\Profile::class,
+                ],
             ]
         ]
 ```

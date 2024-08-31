@@ -197,7 +197,7 @@ class BaseJsonRpcServer
      *
      * @return int error
      */
-    private function getRequest(): int
+    private function getRequest(): ?int
     {
         $error = null;
 
@@ -378,7 +378,7 @@ class BaseJsonRpcServer
         $id = property_exists($call, 'id') ? $call->id : null;
         $params = property_exists($call, 'params') ? $call->params : [];
         $result = null;
-        $namespace = substr($call->method, 0, strpos($call->method, '.'));
+        $namespace = strpos('.', $call->method) ? substr($call->method, 0, strpos($call->method, '.')) : '';
 
         try {
             // set named parameters

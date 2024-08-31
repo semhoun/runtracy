@@ -29,7 +29,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
 use SlimTracy\Collectors\DoctrineCollector;
-use SlimTracy\Collectors\IdormCollector;
 use SlimTracy\Helpers\ConsolePanel;
 use SlimTracy\Helpers\DoctrinePanel;
 use SlimTracy\Helpers\EloquentORMPanel;
@@ -67,7 +66,6 @@ class TracyMiddleware implements MiddlewareInterface
     ) {
         include_once realpath(__DIR__ . '/../') . '/shortcuts.php';
 
-        error_log('MD');
         $this->container = $app->getContainer();
         $this->versions = [
             'slim' => App::VERSION,
