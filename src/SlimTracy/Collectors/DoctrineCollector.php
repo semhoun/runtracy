@@ -45,9 +45,10 @@ class DoctrineCollector
         }
 
         $queries = new DoctrineLogger\Queries();
-        $middleware = new DoctrineLogger\Middleware($queries);
 
-        $conf->setMiddlewares([$middleware]);
+        $middlewares = $conf->getMiddlewares();
+        $middlewares[] = new DoctrineLogger\Middleware($queries);
+        $conf->setMiddlewares($middlewares);
 
         if (method_exists($c, 'set')) {
             $c->set('tracy.doctrineQueries', $queries);
