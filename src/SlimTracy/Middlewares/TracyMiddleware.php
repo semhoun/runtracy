@@ -116,13 +116,16 @@ class TracyMiddleware implements MiddlewareInterface
                 $this->versions
             ));
         }
-        if (isset($cfg['showTwigPanel']) && $cfg['showTwigPanel']) {
-            if ($this->container->has(\Twig\Profiler\Profile::class)) {
-                Debugger::getBar()->addPanel(new TwigPanel(
-                    $this->container->get(\Twig\Profiler\Profile::class),
-                    $this->versions
-                ));
-            }
+        if (
+            isset($cfg['showTwigPanel'])
+            && $cfg['showTwigPanel']
+            && isset($this->defcfg['configs']['Container']['Twig'])
+            && $this->container->has($this->defcfg['configs']['Container']['Twig'])
+        ) {
+            Debugger::getBar()->addPanel(new TwigPanel(
+                $this->container->get($this->defcfg['configs']['Container']['Twig']),
+                $this->versions
+            ));
         }
         if (isset($cfg['showPhpInfoPanel']) && $cfg['showPhpInfoPanel']) {
             Debugger::getBar()->addPanel(new PhpInfoPanel());
@@ -214,10 +217,15 @@ class TracyMiddleware implements MiddlewareInterface
      */
     private function runCollectors(): void
     {
-        if (isset($this->defcfg['showDoctrinePanel']) && class_exists('\Doctrine\DBAL\Connection')) {
+        if (
+            isset($this->defcfg['showDoctrinePanel'])
+            && class_exists('\Doctrine\DBAL\Connection')
+            && isset($this->defcfg['configs']['Container']['Doctrine'])
+            && $this->container->has($this->defcfg['configs']['Container']['Doctrine'])
+        ) {
             new DoctrineCollector(
                 $this->container,
-                $this->defcfg['showDoctrinePanel']
+                $this->defcfg['configs']['Container']['Doctrine']
             );
         }
     }
