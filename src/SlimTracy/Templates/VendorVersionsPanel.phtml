@@ -6,8 +6,9 @@ if (!function_exists('h')) {
     /**
      * Convenience method for htmlspecialchars.
      */
-    function h($str): string
+    function h(?string $str): string
     {
+		if($str == null) return '';
 	    return htmlspecialchars($str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 }
