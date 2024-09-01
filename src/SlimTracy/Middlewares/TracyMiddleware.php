@@ -103,6 +103,9 @@ class TracyMiddleware implements MiddlewareInterface
         if (! class_exists('\Illuminate\Database\Capsule\Manager')) {
             unset($this->defcfg['showEloquentORMPanel']);
         }
+        if (!$this->defcfg['configs']['ConsoleEnable']) {
+             unset($this->defcfg['showConsolePanel']);
+        }
 
         if (
             isset($cfg['showEloquentORMPanel'])

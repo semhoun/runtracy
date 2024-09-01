@@ -117,7 +117,10 @@ class DoctrinePanel implements IBarPanel
      */
     protected function formatArrayData($data): string
     {
-        $str;
+        if (! is_array($data)) {
+            return '';
+        }
+        $str = '';
         $idx = 1;
         foreach ($data as $entry) {
             $str = $idx . ': '. $entry;
@@ -134,7 +137,10 @@ class DoctrinePanel implements IBarPanel
      */
     protected function transformType($data): string
     {
-        $str;
+        if (! is_array($data)) {
+            return '';
+        }
+        $str = '';
         $idx = 1;
         foreach ($data as $entry) {
             $str = $idx . ': '. $entry->name;

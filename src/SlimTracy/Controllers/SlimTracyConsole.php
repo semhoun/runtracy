@@ -45,7 +45,7 @@ class SlimTracyConsole extends WebConsoleRPCServer
 
         $ConsoleResponse = $this->execute();
 
-        if ($cfg['ConsoleFromEncoding'] && $cfg['ConsoleFromEncoding'] != 'UTF-8') {
+        if ($cfg['ConsoleFromEncoding'] && $cfg['ConsoleFromEncoding'] !== 'UTF-8') {
             $ConsoleResponse['result']['output'] = mb_convert_encoding(
                 $ConsoleResponse['result']['output'],
                 'UTF-8',
